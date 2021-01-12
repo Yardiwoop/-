@@ -1,1 +1,283 @@
+#pragma once
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include "Student.h"
 
+using namespace std;
+
+class File
+{
+private:
+
+	string filename;
+	fstream fileStream;
+	int length;
+
+	struct cartoon
+	{
+		long int money;
+		int group;
+		double mark;
+		vector<string> n_c;
+	};
+
+public:
+
+	File()
+	{
+		this->length = 0;
+	}
+
+	void openTextFile(string filename) {
+		try {
+			this->fileStream.open(filename, ios::in | ios::out | ios::trunc);
+			this->filename = filename;
+			if (!this->fileStream.is_open()) throw 1;
+		}
+		catch (int) {
+			cerr << "[RUNTIME] Error while opening file...\n";
+			terminate();
+		}
+	}
+
+	void putString(string text) {
+		try {
+			if (!this->fileStream.is_open()) throw 1;
+			for (auto ch : text) {
+				this->fileStream.put(ch);
+			}
+			this->length += text.size();
+		}
+		catch (int) {
+			cerr << "[RUNTIME] File is not open error...\n";
+			terminate();
+		}
+
+	}
+
+	void openFileStream(string filename) {
+		try {
+			this->fileStream.open(filename, ios::binary | ios::in | ios::out | ios::trunc);
+			this->filename = filename;
+			if (!this->fileStream.is_open()) throw 1;
+		}
+		catch (int) {
+			cerr << "[RUNTIME] Error while opening file...\n";
+			terminate();
+		}
+	}
+
+	File& operator<< (string obj)
+	{
+		try {
+			if (!this->fileStream.is_open()) throw 1;
+			putString(obj);
+			return *this;
+		}
+		catch (int) {
+			cerr << "[RUNTIME] Error while opening file...\n";
+			terminate();
+		}
+	}
+
+	File& operator>> (string& obj) {
+		try {
+			if (!this->fileStream.is_open()) throw 1;
+			this->fileStream.seekg(0);
+			char ch;
+			for (int i = 0; i < getLength(); i++) {
+				this->fileStream.get(ch);
+				obj.push_back(ch);
+			}
+		}
+		catch (int) {
+			cerr << "[RUNTIME] Error while opening file...\n";
+			terminate();
+		}
+	}
+
+
+	int getLength()
+	{
+		return this->length;
+	}
+
+
+	void putObject(Student* object, int index = -1) {
+		try {
+			if (!this->fileStream.is_open()) throw 1;
+			if (index < 0) {
+				this->fileStream.seekg(length * sizeof(Student));
+				this->length++;
+			}
+			else {
+				try {
+					if (index >= this->length) throw 1;
+					this->fileStream.seekg(index * sizeof(Student));
+				}
+				catch (int) {
+					cerr << "[RUNTIME] Run out of scope error...\n";
+					terminate();
+				}
+			}
+			this->fileStream.write((char*)object, sizeof(Student));
+		}
+		catch (int) {
+			cerr << "[RUNTIME] File is not open error...\n";
+			terminate();
+		}
+	}
+
+	void outputToObject(Student* object, int index) {
+		try {
+			if (!this->fileStream.is_open()) throw 1;
+			this->fileStream.seekg(index * sizeof(Student));
+			this->fileStream.read((char*)object, sizeof(Student));
+		}
+		catch (int) {
+			cerr << "[RUNTIME] File is not open error...\n";
+			terminate();
+		}
+	}
+
+	Student* getObject(int index) {
+		try {
+			if (!this->fileStream.is_open()) throw 1;
+			try {
+				if (index >= this->length || index < 0) throw 1;
+				Student* object = new Student;
+				this->fileStream.seekg(index * sizeof(Student));
+				this->fileStream.read((char*)object, sizeof(Student));
+				return object;
+			}
+			catch (int) {
+				cerr << "[RUNTIME] Run out of scope error...\n";
+				terminate();
+			}
+			cout << "";
+		}
+		catch (int) {
+			cerr << "[RUNTIME] File is not open error...\n";
+			terminate();
+		}
+	}
+
+	void printObject() {
+		
+		for (int i = 0; i < getLength(); i++) {
+			cout << getObject(i)->toString() << endl;
+		}
+		cout << endl;
+	}
+
+
+	Student* deleteObject(int index) {
+		try {
+			if (!this->fileStream.is_open()) throw 1;
+			try {
+				if (index >= this->length || index < 0) throw 1;
+
+				Student* res = getObject(index);
+
+				for (int i = index + 1; i < getLength(); i++) {
+					Student* tmp = new Student;
+					outputToObject(tmp, i);
+					putObject(tmp, i - 1);
+				}
+
+				this->length--;
+
+				return res;
+			}
+			catch (int) {
+				cerr << "[RUNTIME] Run out of scope error...\n";
+				terminate();
+			}
+			cout << "";
+		}
+		catch (int) {
+			cerr << "[RUNTIME] File is not open error...\n";
+			terminate();
+		}
+	}
+	//void ShellSort(int n, int mass[])
+	//{
+	//	int i, j, step;
+	//	int tmp;
+	//	for (step = n / 2; step > 0; step /= 2)
+	//		for (i = step; i < n; i++)
+	//		{
+	//			tmp = mass[i];
+	//			for (j = i; j >= step; j -= step)
+	//			{
+	//				if (tmp < mass[j - step])
+	//					mass[j] = mass[j - step];
+	//				else
+	//					break;
+	//			}
+	//			mass[j] = tmp;
+	//		}
+	//}
+
+	void shell_sоrt_name()
+	{
+		int i, j, step;
+		Student* tmp;
+		for (step = getLength() / 2; step > 0; step /= 2)
+			for (i = step; i <getLength(); i++)
+			{
+				tmp = getObject(i);
+				for (j = i; j >= step; j -= step)
+				{
+					if (tmp->getName() < getObject(j - step)->getName())
+
+					{
+
+						putObject(getObject(j), j - step);
+						
+					}
+					else
+						break;
+				}
+				putObject(getObject(j), i);
+				
+			}
+	}
+	
+	void shell_sоrt_grоup()
+	{
+		int i, j, step;
+		Student* tmp;
+		for (step = getLength() / 2; step > 0; step /= 2)
+			for (i = step; i <getLength(); i++)
+			{
+				tmp = getObject(i);
+				for (j = i; j >= step; j -= step)
+				{
+					if (tmp->getGroup() < getObject(j - step)->getGroup())
+
+					{
+
+						putObject(getObject(j), j - step);
+
+					}
+					else
+						break;
+				}
+				putObject(getObject(j), i);
+
+			}
+	}
+	
+
+
+	void setSeek(int s) {
+		this->fileStream.seekg(s);
+	}
+
+	void close() {
+		this->fileStream.close();
+	}
+};
