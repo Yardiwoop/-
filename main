@@ -1,0 +1,55 @@
+#include <iostream>
+#include "Student.h"
+#include "File.h"
+
+using namespace std;
+
+int main()
+{
+
+
+	File f1;
+	f1.openFileStream("bin.bin");
+	setlocale(LC_ALL, "Russian");
+	Student* st1 = new Student("Zhuk_Artem_Yurievich", 751901, 10, 612);
+	Student* st2 = new Student("Ignatovich_Konstantin_Sergeevich", 832002, 4, 322);
+	Student* st3 = new Student("Latushko_Svetlana_Sergeevna", 675103, 9, 751);
+	Student* st4 = new Student("Daroshevish_Ira_Davydovna", 920951, 5, 834);
+	Student* st5 = new Student("Cheh_Petr_Dmitrievich", 950507, 4, 305);
+	
+	f1.putObject(st1);
+	f1.putObject(st2);
+	f1.putObject(st3);
+	f1.putObject(st4);
+	f1.putObject(st5);
+	
+	Student* any = new Student();
+
+	cout << "\n-------TXT in TXT mode-------\n";
+	f1.printObject();
+	f1.shell_sort_name();
+	cout << "Sort by fio:" << endl;
+	cout << "\n--------------------------------------------------------\n";
+	f1.printObject();
+	f1.shell_sort_groups();
+	cout << "Sort by groups:" << endl;
+	cout << "\n--------------------------------------------------------\n";
+	f1.printObject();
+
+	for (int i = 0; i < f1.getLength(); i++)
+	{
+		if (f1.getObject(i)->getName() == "Daroshevish_Ira_Davydovna")
+		{
+			Student* del = f1.deleteObject(i);
+			cout << del->toString() << " IS DELETED" << endl;
+			i--;
+		}
+	}
+	cout << "\nAfter deleted" << endl;
+	cout << "\n--------------------------------------------------------\n";
+	f1.printObject();
+
+	f1.close();
+
+	return 0;
+}
