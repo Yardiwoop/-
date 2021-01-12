@@ -1,0 +1,84 @@
+#pragma once
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Student
+{
+private:
+	string name;
+	long int money;
+	int group;
+	int mark;
+
+public:
+
+	Student()
+	{
+		this->name = "";
+		this->group = 0;
+		this->mark = 0;
+		this->money = 0;
+	}
+
+	Student( string Name, int Group, int Mark, long int Money)
+	{
+		
+		this->name = Name;
+		this->group = Group;
+		this->mark = Mark;
+		this->money = Money;
+	}
+
+	string toString()
+	{
+		string res = " ";
+		res += this->name + ",   ";
+		res += to_string(this->group) + ",   " + to_string(this->mark) + ",   " + to_string(this->money);
+	
+		return res;
+	}
+
+	
+	void setName(string n)
+	{
+		this->name = n;
+	}
+
+	void setGroups(int p)
+	{
+		this->group = p;
+	}
+
+	void setMoney(long int y)
+	{
+		this->money = y;
+	}
+
+	void setMark(double r)
+	{
+		this->mark = r;
+	}
+
+
+	string getName()
+	{
+		return this->name;
+	}
+
+	int getGroup()
+	{
+		return this->group;
+	}
+
+	long int getMoney()
+	{
+		return this->money;
+	}
+
+	int getMark()
+	{
+		return this->mark;
+	}
+};
